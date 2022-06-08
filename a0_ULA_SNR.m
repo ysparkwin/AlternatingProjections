@@ -15,7 +15,7 @@
 % M. Wagner, Y. Park, and P. Gerstoft, “Gridless DOA estimation and root-MUSIC for non-uniform linear arrays,” IEEE Trans. Signal Process. 69, 2144–2157 (2021).
 % M. Wagner, P. Gerstoft, and Y. Park, “Gridless DOA estimation via alternating projections,” in Proc. IEEE ICASSP (2019), pp. 4215–4219.
 % Y. Park and P. Gerstoft, “Alternating pro jections gridless covariance-based estimation for DOA,” in Proc. IEEE ICASSP (2021), pp. 4385–4389.
-% Y. Park and P. Gerstoft, “Gridless sparse covariance-based beamforming via alternating projections including co-prime arrays,” J. Acoust. Soc. Am. 151(6),3828-3837 (2022), pp. 4385–4389.
+% Y. Park and P. Gerstoft, “Gridless sparse covariance-based beamforming via alternating projections including co-prime arrays,” J. Acoust. Soc. Am. 151(6), 3828-3837 (2022).
 
 %%
 clear; clc; %close all;
