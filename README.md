@@ -16,8 +16,9 @@ The codes provide:
 
 # Citation
 
-**[M. Wagner, Y. Park, and P. Gerstoft, “Gridless DOA estimation and root-MUSIC for non-uniform linear arrays,” IEEE Trans. Signal Process. 69, 2144–2157 (2021).](https://ieeexplore.ieee.org/abstract/document/9384289)  
-[M. Wagner, P. Gerstoft, and Y. Park, “Gridless DOA estimation via alternating projections,” in Proc. IEEE ICASSP (2019), pp. 4215–4219.](https://ieeexplore.ieee.org/abstract/document/8682920)**  
+**[M. Wagner, Y. Park, and P. Gerstoft, “Gridless DOA estimation and root-MUSIC for non-uniform linear arrays,” IEEE Trans. Signal Process. 69, 2144–2157 (2021).](https://ieeexplore.ieee.org/abstract/document/9384289)
+[Y. Park and P. Gerstoft, “Gridless sparse covariance-based beamforming via alternating projections including co-prime arrays,” J. Acoust. Soc. Am. 151(6), 3828-3837 (2022).](https://asa.scitation.org/doi/10.1121/10.0011617)**
+[M. Wagner, P. Gerstoft, and Y. Park, “Gridless DOA estimation via alternating projections,” in Proc. IEEE ICASSP (2019), pp. 4215–4219.](https://ieeexplore.ieee.org/abstract/document/8682920)
 [Y. Park and P. Gerstoft, “Alternating projections gridless covariance-based estimation for DOA,” in Proc. IEEE ICASSP (2021), pp. 4385–4389.](https://ieeexplore.ieee.org/abstract/document/9414972)
 
 
@@ -25,6 +26,9 @@ The codes provide:
 
 Version 1.0: (05/09/2022 by Y. Park)  
 System framework as defined in [Noiselab DOA estimation](http://noiselab.ucsd.edu/pub.html).
+
+Version 2.0: (06/08/2022 by Y. Park)
+AP Covariance [JASA 2022]
 
 # Contact
 
