@@ -21,6 +21,7 @@ The codes provide:
 -[M. Wagner, P. Gerstoft, and Y. Park, “Gridless DOA estimation via alternating projections,” in Proc. IEEE ICASSP (2019), pp. 4215–4219.](https://ieeexplore.ieee.org/abstract/document/8682920)  
 -[Y. Park and P. Gerstoft, “Alternating projections gridless covariance-based estimation for DOA,” in Proc. IEEE ICASSP (2021), pp. 4385–4389.](https://ieeexplore.ieee.org/abstract/document/9414972)  
 
+[[pdf]](https://www.dropbox.com/sh/qgi9symf43rki41/AADSrGg567PS86_S4A7j6aWEa?dl=0)  
 
 # Updates
 
