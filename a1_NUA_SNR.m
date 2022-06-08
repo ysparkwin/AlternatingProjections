@@ -2,6 +2,10 @@
 % written by Y. Park
 % System framework as defined in Noiselab DOA estimation
 
+% Version 2.0: (06/08/2022)
+% written by Y. Park
+% AP Covariance (JASA 2022)
+
 % Mark Wagner, Yongsung Park, & Peter Gerstoft
 % MPL/SIO/UCSD
 % wagnermark1992@gmail.com / yongsungpark@ucsd.edu / gerstoft@ucsd.edu
@@ -11,6 +15,7 @@
 % M. Wagner, Y. Park, and P. Gerstoft, “Gridless DOA estimation and root-MUSIC for non-uniform linear arrays,” IEEE Trans. Signal Process. 69, 2144–2157 (2021).
 % M. Wagner, P. Gerstoft, and Y. Park, “Gridless DOA estimation via alternating projections,” in Proc. IEEE ICASSP (2019), pp. 4215–4219.
 % Y. Park and P. Gerstoft, “Alternating pro jections gridless covariance-based estimation for DOA,” in Proc. IEEE ICASSP (2021), pp. 4385–4389.
+% Y. Park and P. Gerstoft, “Gridless sparse covariance-based beamforming via alternating projections including co-prime arrays,” J. Acoust. Soc. Am. 151(6),3828-3837 (2022), pp. 4385–4389.
 
 %%
 clear; clc; %close all;
@@ -30,7 +35,7 @@ for xaxis = 1:length(xAxes)
 Nsim = 100;
 for nsim=1:Nsim
 
-rngN = (xaxis-1)*Nsim + nsim; rng(rngN);
+rngN = (xaxis-1)*Nsim + nsim + 100; rng(rngN);
 disp(' ')
 disp(['SNR',num2str(xAxes(xaxis)),'#Sim : ',num2str(nsim)])
 
@@ -172,7 +177,7 @@ outputsrMUSIC = [outputsrMUSIC; outputrMUSIC];
 % t_est = -t_est*lambda/d;
 % DoA_est_deg = asin(t_est)/pi*180;
 % DoA_error = errorDOAcutoff(DoA_est_deg,anglesTrue,errCut);
-% disp(['RMSE APG-Snapshot constraint: ',num2str(sqrt(mean(power(DoA_error,2))))])
+% disp(['RMSE AP-Snapshot ULA: ',num2str(sqrt(mean(power(DoA_error,2))))])
 % 
 % if nsim==1 && xaxis==1, outputsAPula = []; end
 % outputAPula = struct('theta',DoA_est_deg,'error',DoA_error);
@@ -191,11 +196,40 @@ tol    = 1e-3;
 t_est = -t_est*lambda/d;
 DoA_est_deg = asin(t_est)/pi*180;
 DoA_error = errorDOAcutoff(DoA_est_deg,anglesTrue,errCut);
-disp(['RMSE APG-Snapshot constraint: ',num2str(sqrt(mean(power(DoA_error,2))))])
+disp(['RMSE AP-Snapshot: ',num2str(sqrt(mean(power(DoA_error,2))))])
 
 if nsim==1 && xaxis==1, outputsAPsnapshot = []; end
 outputAPsnapshot = struct('theta',DoA_est_deg,'error',DoA_error);
 outputsAPsnapshot = [outputsAPsnapshot; outputAPsnapshot];
+
+
+%% AP-Covariance
+
+max_iter = 1000;
+Nalg    = Nsource;
+tol     = 1e-4;
+
+if exist('Tu_init','var') == 0
+    Tu_init = rand(Nsensor) + 1i*rand(Nsensor);
+    Z_init = rand(Nsensor) + 1i*rand(Nsensor);
+end
+[ Tu,iAP,~,~,~ ]  = APCOVv1p00(receivedSignal,q,Nalg,max_iter,tol,Tu_init,Z_init);
+
+[t_est,~]   = wagner_decomp( q, Nalg, Tu );     %decompose
+t_est = -t_est*lambda/d;
+while(1)
+    t_est(t_est>1) = t_est(t_est>1)  - 2;
+    t_est(t_est<-1)= t_est(t_est<-1) + 2;
+    if sum(t_est>1 | t_est<-1) == 0, break; end
+end
+DoA_est_deg = asin(t_est)/pi*180;
+clear Tu_init Z_init
+DoA_error = errorDOAcutoff(DoA_est_deg,anglesTrue,errCut);
+disp(['RMSE AP-Covariance: ',num2str(sqrt(mean(power(DoA_error,2))))])
+
+if nsim==1 && xaxis==1, outputsAPcov = []; end
+outputAPcov = struct('theta',DoA_est_deg,'error',DoA_error);
+outputsAPcov = [outputsAPcov; outputAPcov];
 
 
 %%  SBL
@@ -226,12 +260,14 @@ totETcbf = [];
 totETrmu=[];
 % totETAPula=[];
 totETAPsnapshot=[];
+totETAPcov=[];
 totETsbl = [];
 for index=1:Nsim
     totETcbf = [totETcbf;outputsCBF((ind-1)*Nsim+index).error];
     totETrmu = [totETrmu;outputsrMUSIC((ind-1)*Nsim+index).error];
 %     totETAPula = [totETAPula;outputsAPula((ind-1)*Nsim+index).error];
     totETAPsnapshot = [totETAPsnapshot;outputsAPsnapshot((ind-1)*Nsim+index).error];
+    totETAPcov = [totETAPcov;outputsAPcov((ind-1)*Nsim+index).error];
     totETsbl = [totETsbl;outputsSBL((ind-1)*Nsim+index).error];
 end
 
@@ -240,12 +276,14 @@ totETcbf = sort(abs(totETcbf));
 totETrmu = sort(abs(totETrmu));
 % totETAPula = sort(abs(totETAPula));
 totETAPsnapshot = sort(abs(totETAPsnapshot));
+totETAPcov = sort(abs(totETAPcov));
 totETsbl = sort(abs(totETsbl));
 
 ecbf(ind) = sqrt(mean(power(totETcbf(1:length(totETcbf)-floor(length(totETcbf)*Nout)),2)));
 ermusic(ind) = sqrt(mean(power(totETrmu(1:length(totETrmu)-floor(length(totETrmu)*Nout)),2)));
 % eapula(ind) = sqrt(mean(power(totETAPula(1:length(totETAPula)-floor(length(totETAPula)*Nout)),2)));
 eapsnapshot(ind) = sqrt(mean(power(totETAPsnapshot(1:length(totETAPsnapshot)-floor(length(totETAPsnapshot)*Nout)),2)));
+eapcov(ind) = sqrt(mean(power(totETAPcov(1:length(totETAPcov)-floor(length(totETAPcov)*Nout)),2)));
 esbl(ind) = sqrt(mean(power(totETsbl(1:length(totETsbl)-floor(length(totETsbl)*Nout)),2)));
 end
 
@@ -264,6 +302,8 @@ h8=plot(xAxes,ermusic,'b-.','linewidth',2,'markersize',10,'displayname',...
 %     'AP-ULA'); figH = [figH,h9];
 h91=plot(xAxes,eapsnapshot,'linewidth',1.8,'markersize',12,'color',pcolor(7,:),'displayname',...
     'AP-Snapshot'); figH = [figH,h91];
+h92=plot(xAxes,eapcov,'linewidth',1.8,'markersize',12,'color','r','displayname',...
+    'AP-Covariance'); figH = [figH,h92];
 hold off;
 
 xlabel('SNR~[dB]','interpreter','latex')
