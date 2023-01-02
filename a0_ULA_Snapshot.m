@@ -106,20 +106,22 @@ end
 
 
 %% CRB
-Acrb = exp( -1i*2*pi/lambda*xq*sinAnglesTracks(:,snapshot).' );
-AcrbD = (-1i*2*pi/lambda*xq*cosd(anglesTracks(:,snapshot)).') ...
-    .* exp( -1i*2*pi/lambda*xq*sinAnglesTracks(:,snapshot).' );
+% CRB-YP Van Trees Book Eq.(8.106) & (8.110)
+vanTreeV = exp( -1i*2*pi/lambda*xq*sinAnglesTracks(:,snapshot).' );
+vanTreeD = (-1i*2*pi/lambda*xq*cosd(anglesTracks(:,snapshot)).') ...
+    .* exp( -1i*2*pi/lambda*xq*sinAnglesTracks(:,snapshot).' ); % D Eq.(8.100)
 
-Xs = cX./(crnl/crnl(1));
-Pn = power(crnl(1),2)/Nsensor;
-Phat = diag(diag(Xs*Xs'/Nsnapshot));
+Xs = cX;
+Pn = mean(diag(((e.*sqrt(crnl/crnl(1)))*(e.*sqrt(crnl/crnl(1)))')/Nsnapshot));
+vanTreeSf = diag(diag(Xs*Xs'/Nsnapshot)); % S_f
 
-H = AcrbD'...
-    *(eye(Nsensor) - Acrb/(Acrb'*Acrb)*Acrb')...
-    *AcrbD;
+% H Eq.(8.101) where P_V Eq.(8.96)
+H = vanTreeD'...
+    *(eye(Nsensor) - vanTreeV/(vanTreeV'*vanTreeV)*vanTreeV')...
+    *vanTreeD;
 
-% det. CRB
-CRB = real(H .* (Phat.'));
+% det. CRB Eq.(8.110)
+CRB = real(H .* (vanTreeSf.'));
 CRB = eye(size(Xs,1)) / CRB * (Pn / Nsnapshot / 2);
 outputsCRBd(xaxis,nsim) = mean(diag(CRB));
 
@@ -136,7 +138,7 @@ end
 [~, Ilocs] = findpeaks(abs(Pcbf),'SORTSTR','descend','Npeaks', Nsource);
 % DoA_error = errorDOA(theta(Ilocs),anglesTrue);
 DoA_error = errorDOAcutoff(theta(Ilocs),anglesTrue,errCut);
-disp(['RMSE CBF: ',num2str(sqrt(mean(power(DoA_error,2))))])
+disp(['RMSE CBF            : ',num2str(sqrt(mean(power(DoA_error,2))))])
 
 if nsim==1 && xaxis==1, outputsCBF = []; end
 outputCBF = struct('theta',theta(Ilocs),'error',DoA_error);
@@ -148,7 +150,7 @@ outputsCBF = [outputsCBF; outputCBF];
 spRmusic = rmusic_1d(Ryy, Nsource, 2*pi*d/lambda);
 %     DoA_error = errorDOA(-rad2deg(spRmusic.x_est),anglesTrue);
 DoA_error = errorDOAcutoff(-rad2deg(spRmusic.x_est),anglesTrue,errCut);
-disp(['RMSE root-MUSIC: ',num2str(sqrt(mean(power(DoA_error,2))))])
+disp(['RMSE root-MUSIC     : ',num2str(sqrt(mean(power(DoA_error,2))))])
 
 if nsim==1 && xaxis==1, outputsrMUSIC = []; end
 outputrMUSIC = struct('theta',-rad2deg(spRmusic.x_est),'error',DoA_error);
@@ -185,7 +187,7 @@ tol    = 1e-3;
 t_est = -t_est*lambda/d;
 DoA_est_deg = asin(t_est)/pi*180;
 DoA_error = errorDOAcutoff(DoA_est_deg,anglesTrue,errCut);
-disp(['RMSE AP-Snapshot: ',num2str(sqrt(mean(power(DoA_error,2))))])
+disp(['RMSE AP-Snapshot    : ',num2str(sqrt(mean(power(DoA_error,2))))])
 
 if nsim==1 && xaxis==1, outputsAPsnapshot = []; end
 outputAPsnapshot = struct('theta',DoA_est_deg,'error',DoA_error);
@@ -214,7 +216,7 @@ end
 DoA_est_deg = asin(t_est)/pi*180;
 clear Tu_init Z_init
 DoA_error = errorDOAcutoff(DoA_est_deg,anglesTrue,errCut);
-disp(['RMSE AP-Covariance: ',num2str(sqrt(mean(power(DoA_error,2))))])
+disp(['RMSE AP-Covariance  : ',num2str(sqrt(mean(power(DoA_error,2))))])
 
 if nsim==1 && xaxis==1, outputsAPcov = []; end
 outputAPcov = struct('theta',DoA_est_deg,'error',DoA_error);
@@ -230,7 +232,7 @@ options.gamma_range=10^-20;
 [gamma, reportSBL] = SBL_v4( sensingMatrix, receivedSignal, options );
 [~,peak_SBL] = findpeaks(gamma,'SORTSTR','descend','Npeaks', Nsource);
 DoA_error = errorDOAcutoff(theta(peak_SBL),anglesTrue,errCut);
-disp(['RMSE SBL: ',num2str(sqrt(mean(power(DoA_error,2))))])
+disp(['RMSE SBL            : ',num2str(sqrt(mean(power(DoA_error,2))))])
 
 if nsim==1 && xaxis==1, outputsSBL = []; end
 outputSBL = struct('theta',theta(peak_SBL),'error',DoA_error);
