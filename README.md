@@ -33,9 +33,10 @@ AP Covariance [JASA 2022]
 
 # Contact
 
-[Mark Wagner](https://scholar.google.com/citations?user=Kbvgpm4AAAAJ&hl=en), [Yongsung Park](https://scholar.google.com/citations?user=kYGe18EAAAAJ&hl=en&oi=ao), & [Peter Gerstoft](https://scholar.google.com/citations?user=oLMfDnYAAAAJ&hl=en)  
+[Mark Wagner](https://scholar.google.com/citations?user=Kbvgpm4AAAAJ&hl=en), [Yongsung Park](https://scholar.google.com/citations?user=jcMeNjMAAAAJ&hl=en&oi=ao), & [Peter Gerstoft](https://scholar.google.com/citations?user=oLMfDnYAAAAJ&hl=en)  
 MPL/SIO/UCSD  
+AOPE/WHOI  
 wagnermark1992@gmail.com  
-yongsungpark@ucsd.edu  
+yongsung.park@whoi.edu  
 gerstoft@ucsd.edu  
 ## [Noiselab](http://noiselab.ucsd.edu/)
